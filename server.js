@@ -30,6 +30,12 @@ app.get('/choki.png', (req, res) => {
 app.get('/pa.png', (req, res) => {
     res.sendFile(__dirname + "/pa.png")
 })
+app.get('/maru.png', (req, res) => {
+    res.sendFile(__dirname + "/maru.png")
+})
+app.get('/aiko.png', (req, res) => {
+    res.sendFile(__dirname + "/aiko.png")
+})
 
 var junkenArray = [];
 var time = 0;
@@ -46,6 +52,9 @@ function allEmit() {
     }
 
     if (time == 4) {
+        if (junkenArray.length <= 1) {
+            junkenArray.push({junken: Math.floor(Math.random() * 3) + 1, name: "コンピュータ", socketid: 0, color: {r: Math.random(), g: Math.random(), b: Math.random()}});
+        }
         io.emit("junkenpon", {time: time, junkenpon: junkenArray});
     }
     if (time == 5) {
@@ -65,7 +74,9 @@ io.on('connection', (socket) => {
     socket.emit("initUserData", {socketid: socket.id, color: color})
 
     socket.on("junken", (data) => {
-        junkenArray.push(data);
+        if (data.junken != 0) {
+            junkenArray.push(data);
+        }
     });
 })
 

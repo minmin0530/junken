@@ -3,6 +3,7 @@ var canvas;
 var myName = "";
 var socketid = "";
 var globalData;
+var finishData;
 var junkenNumber = 0;
 var buttonGu;
 var buttonChoki;
@@ -57,7 +58,7 @@ function colorToText(mm) {
     colorText += m2 + '' + m1;
     return colorText;
 }  
-const IMG_SIZE = 256;
+const IMG_SIZE = 128;
 var ctx;
 window.onload = function() {
     canvas = document.getElementById("canvas");
@@ -161,47 +162,6 @@ socket.on("timer", (data) => {
     }
 });
 
-// function initUI(data) {
-//     const divImg = document.createElement("div");
-//     const imgGu = document.createElement("img");
-//     imgGu.src = "./gu.png";
-//     imgGu.style.background = colorToText(data.color);
-
-//     const imgChoki = document.createElement("img");
-//     imgChoki.src = "./choki.png";
-//     imgChoki.style.background = colorToText(data.color);
-
-//     const imgPa = document.createElement("img");
-//     imgPa.src = "./pa.png";
-//     imgPa.style.background = colorToText(data.color);
-
-//     buttonGu    = document.createElement("button");
-//     buttonChoki = document.createElement("button");
-//     buttonPa    = document.createElement("button");
-    
-//     buttonGu.appendChild(imgGu)
-//     buttonChoki.appendChild(imgChoki)
-//     buttonPa.appendChild(imgPa)
-    
-//     divImg.appendChild(buttonGu);
-//     divImg.appendChild(buttonChoki);
-//     divImg.appendChild(buttonPa);
-
-//     document.body.appendChild(divImg);
-//     buttonGu.addEventListener("click", (e) => {
-//         junkenNumber = 1;
-//     });
-
-//     buttonChoki.addEventListener("click", (e) => {
-//         junkenNumber = 2;
-//     });
-
-//     buttonPa.addEventListener("click", (e) => {
-//         junkenNumber = 3;
-//     });
-
-// }
-
 socket.on("initUserData", (data) => {
     globalData = data;
 
@@ -209,98 +169,110 @@ socket.on("initUserData", (data) => {
     document.getElementById("choki").style.background = colorToText(data.color);
     document.getElementById("pa").style.background = colorToText(data.color);
 });
+const NEXT_SIZE = 150;
+
+const positions =[{x: 0, y: 0},            {x: NEXT_SIZE, y: 0},             {x: NEXT_SIZE * 2, y: 0},            {x: NEXT_SIZE * 3, y: 0},
+                  {x: 0, y: NEXT_SIZE},    {x: NEXT_SIZE, y: NEXT_SIZE},     {x: NEXT_SIZE * 2, y: NEXT_SIZE},    {x: NEXT_SIZE * 3, y: NEXT_SIZE},
+                  {x: 0, y: NEXT_SIZE * 2},{x: NEXT_SIZE, y: NEXT_SIZE * 2}, {x: NEXT_SIZE * 2, y: NEXT_SIZE * 2},{x: NEXT_SIZE * 3, y: NEXT_SIZE * 2},
+                  {x: 0, y: NEXT_SIZE * 3},{x: NEXT_SIZE, y: NEXT_SIZE * 3}, {x: NEXT_SIZE * 2, y: NEXT_SIZE * 3},{x: NEXT_SIZE * 3, y: NEXT_SIZE * 3}
+                ];
 
 socket.on("junkenpon", (data) => {
-    console.log(data);
-    for (const junken of data.junkenpon) {
-        if (junken.junken == 1) {
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    finishData = data;
+    for (let i = 0; i < data.junkenpon.length; i++) {
+        if (data.junkenpon[i].junken == 1) {
             ctx.fillStyle = "black";
-            ctx.font = "48px serif";
-            ctx.fillText(junken.name, 0, 300);
-            ctx.fillStyle = colorToText(junken.color);
-            ctx.fillRect(0, 0, IMG_SIZE, IMG_SIZE);            
+            ctx.font = "24px serif";
+            ctx.fillText(data.junkenpon[i].name, positions[i].x, positions[i].y + NEXT_SIZE);
+            ctx.fillStyle = colorToText(data.junkenpon[i].color);
+            ctx.fillRect(positions[i].x, positions[i].y, IMG_SIZE, IMG_SIZE);            
             const img = new Image();
             img.onload = function () {
-                ctx.drawImage(img, 0, 0);
+                ctx.drawImage(img, positions[i].x, positions[i].y);
             };
             img.src = "./gu.png";
         }
-        if (junken.junken == 2) {
+        if (data.junkenpon[i].junken == 2) {
             ctx.fillStyle = "black";
-            ctx.font = "48px serif";
-            ctx.fillText(junken.name, 0, 300);
-            ctx.fillStyle = colorToText(junken.color);
-            ctx.fillRect(0, 0, IMG_SIZE, IMG_SIZE);            
+            ctx.font = "24px serif";
+            ctx.fillText(data.junkenpon[i].name, positions[i].x, positions[i].y + NEXT_SIZE);
+            ctx.fillStyle = colorToText(data.junkenpon[i].color);
+            ctx.fillRect(positions[i].x, positions[i].y, IMG_SIZE, IMG_SIZE);            
             const img = new Image();
             img.onload = function () {
-                ctx.drawImage(img, 0, 0);
+                ctx.drawImage(img, positions[i].x, positions[i].y);
             };
             img.src = "./choki.png";
         }
-        if (junken.junken == 3) {
+        if (data.junkenpon[i].junken == 3) {
             ctx.fillStyle = "black";
-            ctx.font = "48px serif";
-            ctx.fillText(junken.name, 0, 300);
-            ctx.fillStyle = colorToText(junken.color);
-            ctx.fillRect(0, 0, IMG_SIZE, IMG_SIZE);            
+            ctx.font = "24px serif";
+            ctx.fillText(data.junkenpon[i].name, positions[i].x, positions[i].y + NEXT_SIZE);
+            ctx.fillStyle = colorToText(data.junkenpon[i].color);
+            ctx.fillRect(positions[i].x, positions[i].y, IMG_SIZE, IMG_SIZE);            
             const img = new Image();
             img.onload = function () {
-                ctx.drawImage(img, 0, 0);
+                ctx.drawImage(img, positions[i].x, positions[i].y);
             };
             img.src = "./pa.png";
         }
     }
-
-    // for (const junken of data.junkenpon) {
-    //     if (junken.junken == 1) {
-    //         const div = document.createElement("div");
-    //         div.style.display = "flex";
-    //         div.style.flexDirection = "column";
-    //         div.style.justifyContent = "center";
-    //         div.style.alignItems = "center";
-    //         const imgGu = document.createElement("img");
-    //         imgGu.src = "./gu.png";
-    //         imgGu.style.background = colorToText(junken.color);
-    //         const userName = document.createElement("h2");
-    //         userName.textContent = junken.name;            
-    //         div.appendChild(imgGu);
-    //         div.appendChild(userName);
-    //         document.body.appendChild(div);
-    //     }
-    //     if (junken.junken == 2) {
-    //         const div = document.createElement("div");
-    //         div.style.display = "flex";
-    //         div.style.flexDirection = "column";
-    //         div.style.justifyContent = "center";
-    //         div.style.alignItems = "center";
-    //         const imgChoki = document.createElement("img");
-    //         imgChoki.src = "./choki.png";
-    //         imgChoki.style.background = colorToText(junken.color);
-    //         const userName = document.createElement("h2");
-    //         userName.style.alignItems = "center";
-    //         userName.textContent = junken.name;
-    //         div.appendChild(imgChoki);
-    //         div.appendChild(userName);
-    //         document.body.appendChild(div);
-    //     }
-    //     if (junken.junken == 3) {
-    //         const div = document.createElement("div");
-    //         div.style.display = "flex";
-    //         div.style.flexDirection = "column";
-    //         div.style.justifyContent = "center";
-    //         div.style.alignItems = "center";
-    //         const imgPa = document.createElement("img");
-    //         imgPa.src = "./pa.png";
-    //         imgPa.style.background = colorToText(junken.color);
-    //         const userName = document.createElement("h2");
-    //         userName.style.alignItems = "center";
-    //         userName.textContent = junken.name;
-    //         div.appendChild(imgPa);
-    //         div.appendChild(userName);
-    //         document.body.appendChild(div);
-    //     }
-    // }
 });
 
 socket.on("finish", (data) => {
+    for (let k = 0; k < finishData.junkenpon.length; k++) {
+        let gu = 0;
+        let choki = 0;
+        let pa = 0;
+        for (let i = 0; i < finishData.junkenpon.length; i++) {
+            if (finishData.junkenpon[i].junken == 1) {
+                gu++;
+            }
+            if (finishData.junkenpon[i].junken == 2) {
+                choki++;
+            }
+            if (finishData.junkenpon[i].junken == 3) {
+                pa++;
+            }
+        }
+
+        if (finishData.junkenpon.length == gu ||
+            finishData.junkenpon.length == choki ||
+            finishData.junkenpon.length == pa ||
+            (gu >= 1 && choki >= 1 && pa >= 1)) {
+            const img = new Image();
+            img.onload = function () {
+                ctx.drawImage(img, positions[k].x, positions[k].y);
+            };
+            img.src = "./aiko.png";    
+        } else if (choki == 0) {
+            if (finishData.junkenpon[k].junken == 3) {
+                const img = new Image();
+                img.onload = function () {
+                    ctx.drawImage(img, positions[k].x, positions[k].y);
+                };
+                img.src = "./maru.png";
+            }
+        } else if (gu == 0) {
+            if (finishData.junkenpon[k].junken == 2) {
+                const img = new Image();
+                img.onload = function () {
+                    ctx.drawImage(img, positions[k].x, positions[k].y);
+                };
+                img.src = "./maru.png";
+            }
+        } else if (pa == 0) {
+            if (finishData.junkenpon[k].junken == 1) {
+                const img = new Image();
+                img.onload = function () {
+                    ctx.drawImage(img, positions[k].x, positions[k].y);
+                };
+                img.src = "./maru.png";
+            }
+        }
+    }
+
 });
